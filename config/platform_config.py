@@ -1,12 +1,14 @@
 class Config:
-    def __init__(self, title, price, description):
+    def __init__(self, domain, title, price, description):
         self.title = title
+        self.domain = domain
         self.price = price
         self.description = description
 
 
 PLATFORM_CONFIG = {
     "flipkart": Config(
+        domain="https://flipkart.com",
         title={
             "tag":"span",
             "attribute":"class",

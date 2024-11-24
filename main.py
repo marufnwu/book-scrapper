@@ -1,5 +1,5 @@
 from scrapers.flipkart import FlipkartScraper
-
+from uploader import ItemUploader
 
 def main():
     platform_scrapers = {
@@ -12,9 +12,12 @@ def main():
 
     if platform in platform_scrapers:
         scraper = platform_scrapers[platform]
-        scraped_data = scraper.scrape(url)
-        print("Scraped Data:")
-        print(scraped_data.to_string())
+        links = scraper.scrapeLinks(url)
+        
+        for link in links:
+            item = scraper.scrape(link)
+            uploader = ItemUploader()
+            uploader.upload([item])
     else:
         print("Platform not supported.")
 
