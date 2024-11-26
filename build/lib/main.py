@@ -3,7 +3,6 @@ from enum import Enum
 import json
 
 from config.config import CONFIG
-from response import Response
 from scrapers.flipkart import FlipkartScraper
 
 class LinkType(Enum):
@@ -16,12 +15,9 @@ platform_scrapers = {
         "amazon":FlipkartScraper(),
     }
 
-def scrape_and_upload(platform, link_type, url)->Response:
+def scrape_and_upload(platform, link_type, url):
     if platform not in platform_scrapers:
-        return Response(
-            error=True,
-            message=f"Unsupported platform: {platform}"
-        )
+        raise ValueError(f"Unsupported platform: {platform}")
 
     scraper = platform_scrapers[platform]
     
@@ -31,22 +27,14 @@ def scrape_and_upload(platform, link_type, url)->Response:
         links = scraper.scrapeLinks(url)
         for link in links:
             item = scraper.scrape(link)
-            if item:
-                items.append(item)
+            items.append(item)
     elif link_type == LinkType.PRODUCT:
         item = scraper.scrape(url)
-        if item:
-            items.append(item)
+        items.append(item)
     else:
-        return Response(
-            error=True,
-            message=f"Invalid link type: {link_type}"
-        )
+        raise ValueError(f"Invalid link type: {link_type}")
     
-    return Response(
-        data=items,
-        message="Success"
-    )
+    return items
 
 def main():
     link_type_help = "Type of link to scrape: " + ", ".join(
@@ -96,12 +84,11 @@ def main():
     try:
         link_type = LinkType(args.link_type)
         result = scrape_and_upload(args.platform, link_type, args.url)
-        print(result.json().strip())
+        items_dict = [item.to_dict() for item in result]
+
+        print(json.dumps(items_dict))
     except Exception as e:
-        print(Response(
-            error=True,
-            message=e.__str__()
-        ))
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()

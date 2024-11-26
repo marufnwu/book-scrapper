@@ -1,4 +1,4 @@
-import requests
+from subprocess import CREATE_NO_WINDOW
 from bs4 import BeautifulSoup
 from typing import List, Dict, Any, Union
 from selenium import webdriver
@@ -10,6 +10,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from typing import List, Dict, Optional
 import random
 import string
+
+from config.config import CONFIG
 
 
 class ScrapedItem:
@@ -76,12 +78,28 @@ class ScrapedItem:
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "title": self.name,
-            "price": self.discount_price,
-            "description": self.details,
-            "specification": self.specification_name,
+            "category_id": self.category_id,
+            "name": self.name,
+            "slug": self.slug,
+            "sku": self.sku,
+            "tags": self.tags,
+            "sort_details": self.sort_details,
+            "specification_name": self.specification_name,
+            "specification_description": self.specification_description,
+            "is_specification": self.is_specification,
+            "details": self.details,
+            "photo": self.photo,
+            "thumbnail": self.thumbnail,
+            "discount_price": self.discount_price,
+            "previous_price": self.previous_price,
+            "stock": self.stock,
+            "meta_keywords": self.meta_keywords,
+            "meta_description": self.meta_description,
+            "status": self.status,
+            "item_type": self.item_type,
             "images": self.images,
-        }
+            "category_name": self.category_name,
+    }
         
     def to_string(self):
         print("Title")    
@@ -113,6 +131,7 @@ class BaseScraper:
 
     def setup_driver(self):
         options = Options()
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
         options.add_argument("--headless")  # Run in headless mode
         options.add_argument("--disable-gpu")
         options.add_argument("--no-sandbox")
@@ -122,8 +141,12 @@ class BaseScraper:
         options.add_argument("start-maximized")
         options.add_argument("enable-automation")
         options.add_argument("--disable-infobars")
+        options.add_argument('log-level=3')
+        
+        service = Service()
+        service.creation_flags = CREATE_NO_WINDOW
 
-        self.driver = webdriver.Chrome(options=options)
+        self.driver = webdriver.Chrome(options=options, service=service)
 
     def fetch_html(self, url: str) -> str:
         try:
@@ -149,7 +172,9 @@ class BaseScraper:
             "This method should be overridden by subclasses.")    
 
     def scrape(self, url: str) -> ScrapedItem:
-        print(f"Fetching html content=> {url}")
+        if CONFIG['DEBUG']:
+            print(f"Fetching html content=> {url}")
+            
         html = self.fetch_html(url)
         item = self.parse(html)
         return item
