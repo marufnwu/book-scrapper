@@ -1,6 +1,7 @@
-book_scraper.py
 main.py
 setup.py
+Utils/__init__.py
+Utils/result_response.py
 book_scraper.egg-info/PKG-INFO
 book_scraper.egg-info/SOURCES.txt
 book_scraper.egg-info/dependency_links.txt
@@ -14,7 +15,6 @@ database/mysql.py
 scrapers/__init__.py
 scrapers/flipkart.py
 scrapers/generic.py
-scrapers/scraper.py
 uploader/__init__.py
 uploader/image.py
 uploader/item.py

@@ -1,3 +1,4 @@
+from os import replace
 from .scraper import BaseScraper, ScrapedItem
 from bs4 import BeautifulSoup
 from typing import List
@@ -47,8 +48,12 @@ class FlipkartScraper(BaseScraper):
             title = self.getText( config.title["tag"], config.title["attribute"], config.title["attr_value"])
             if not title:
                 return None
+            
             price = self.getText(config.price["tag"], config.price["attribute"], config.price["attr_value"])
             price = re.sub("[^0-9^.]", "", price)
+            
+            previous_price = self.getText(config.previous_price["tag"], config.previous_price["attribute"], config.previous_price["attr_value"])
+            previous_price = re.sub("[^0-9^.]", "", previous_price)
             
             paths = self.soup.find_all("div", class_="r2CdBx")
             category_name = "Others"
@@ -63,22 +68,27 @@ class FlipkartScraper(BaseScraper):
             spec = self.sepec()
             images = self.images()
             
+            meta_description = self.soup.find("meta", property="og:description").getText()
+            meta_description = description.replace("Flipkart.com", "") if description else None
             
-
             item =  ScrapedItem(
                 name=title,
                 discount_price=price, 
                 sort_details=description[:100], 
                 details=description, 
                 is_specification=True,
+                brand_name= spec.get("Publisher", "None"),
                 specification_name=json.dumps(list(spec.keys())), 
                 specification_description=json.dumps(list(spec.values())), 
                 images=images,
-                category_name=category_name
+                category_name=category_name,
+                previous_price=previous_price,
+                meta_description=meta_description,
             )
             
             return item
-        except:
+        except Exception as e:
+            print(e)
             return None
     
     def parseItemLinks(self, htlm: str) -> List[str]:

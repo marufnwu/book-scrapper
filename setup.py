@@ -1,14 +1,20 @@
+from pkg_resources import parse_requirements
 from setuptools import setup, find_packages
 
+    
 setup(
-    name="book_scraper",  # The name of your package
-    version="1.0.0",
-    py_modules=["main"],  # List of Python modules in your package
-    packages=find_packages(),  # Automatically finds packages
-    install_requires=[],        
+    name="book_scraper",
+    version="1.0.1",
+    python_requires='>3.5.2',
+    py_modules=["main"],
+    packages=find_packages(),
+    install_requires=[
+        
+    ],  
+    include_package_data=True,
     entry_points={
         "console_scripts": [
-            "bookscraper=main:main",  # CLI command name = module:function
+            "bookscraper=main:main",  # CLI command
         ]
     },
 )

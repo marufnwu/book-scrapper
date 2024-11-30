@@ -1,11 +1,9 @@
 import argparse
 from enum import Enum
-import json
 
 from config.config import CONFIG
-from response import Response
 from scrapers.flipkart import FlipkartScraper
-
+from Utils import Response
 class LinkType(Enum):
     PRODUCT = 1
     CATEGORY = 2

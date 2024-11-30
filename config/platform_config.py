@@ -1,8 +1,9 @@
 class Config:
-    def __init__(self, domain, title, price, description):
+    def __init__(self, domain, title, price,previous_price, description):
         self.title = title
         self.domain = domain
         self.price = price
+        self.previous_price = previous_price
         self.description = description
 
 
@@ -19,6 +20,12 @@ PLATFORM_CONFIG = {
             "tag":"div",
             "attribute":"class",
             "attr_value":"Nx9bqj CxhGGd"
+            
+        },
+        previous_price={
+            "tag":"div",
+            "attribute":"class",
+            "attr_value":"yRaY8j A6+E6v"
             
         },
         description={
